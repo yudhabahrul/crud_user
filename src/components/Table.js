@@ -3,41 +3,45 @@ import { useFormContext } from "../context/FormContext";
 import { useUserContext } from "../context/UserContext";
 
 const Tabel = () => {
-  const [sortBy, setSortBy] = useState(""); // Untuk sorting
+  // State untuk pengurutan dan filter status keanggotaan
+  const [sortBy, setSortBy] = useState(""); // Untuk sorting berdasarkan nama, email, atau umur
   const [statusFilter, setStatusFilter] = useState({
-    aktif: false,
-    tidakAktif: false,
+    aktif: false, // Untuk filter status "Aktif"
+    tidakAktif: false, // Untuk filter status "Tidak Aktif"
   });
+
+  // Mengambil fungsi dari context untuk menampilkan form dan mengelola pengguna
   const { toggleFormVisibility } = useFormContext();
   const { users, selectUserForUpdate, removeUser } = useUserContext();
 
-  // function untuk memilih mengurutkan data user berdasarkan pilihan
+  // Fungsi untuk menangani perubahan pilihan urutan data
   const handleSortChange = (e) => {
-    setSortBy(e.target.value);
+    setSortBy(e.target.value); // Mengubah nilai state sortBy sesuai pilihan
   };
 
+  // Fungsi untuk menangani perubahan filter status keanggotaan
   const handleStatusChange = (e) => {
     const { name, checked } = e.target;
     setStatusFilter((prevState) => ({
       ...prevState,
-      [name]: checked,
+      [name]: checked, // Mengubah status filter berdasarkan pilihan checkbox
     }));
   };
 
-  // function untuk memproses pengurutan data user
+  // Fungsi untuk mendapatkan data pengguna yang sudah diurutkan dan difilter
   const getSortedUsers = () => {
-    let sortedUsers = [...users];
+    let sortedUsers = [...users]; // Membuat salinan data pengguna
 
-    // Penyortiran berdasarkan pilihan
+    // Penyortiran berdasarkan pilihan urutan
     if (sortBy === "nama") {
-      sortedUsers.sort((a, b) => a.nama.localeCompare(b.nama));
+      sortedUsers.sort((a, b) => a.nama.localeCompare(b.nama)); // Mengurutkan berdasarkan nama
     } else if (sortBy === "email") {
-      sortedUsers.sort((a, b) => a.email.localeCompare(b.email));
+      sortedUsers.sort((a, b) => a.email.localeCompare(b.email)); // Mengurutkan berdasarkan email
     } else if (sortBy === "umur") {
-      sortedUsers.sort((a, b) => a.umur - b.umur);
+      sortedUsers.sort((a, b) => a.umur - b.umur); // Mengurutkan berdasarkan umur
     }
 
-    // Filter berdasarkan status
+    // Filter berdasarkan status keanggotaan
     if (statusFilter.aktif) {
       sortedUsers = sortedUsers.filter((user) => user.status === "Aktif");
     }
@@ -49,13 +53,13 @@ const Tabel = () => {
     return sortedUsers;
   };
 
-  //function untuk menghadle pembaruan user
+  // Fungsi untuk menangani pembaruan data pengguna
   const handleUpdateUser = (user) => {
-    selectUserForUpdate(user);
-    toggleFormVisibility();
+    selectUserForUpdate(user); // Memilih pengguna untuk diupdate
+    toggleFormVisibility(); // Menampilkan form untuk update pengguna
   };
 
-  // Inisialisasi nilai yang dikembalikan oleh function getSortedUsers
+  // Mendapatkan daftar pengguna yang sudah diurutkan dan difilter
   const sortedUsers = getSortedUsers();
 
   return (
@@ -66,6 +70,7 @@ const Tabel = () => {
           <div className="dropdown">
             <button className="dropdown-button">Urutkan berdasarkan</button>
             <div className="dropdown-content">
+              {/* Pilihan urutan berdasarkan nama, email, atau umur */}
               <label>
                 <input
                   type="radio"
@@ -95,6 +100,7 @@ const Tabel = () => {
               </label>
               <hr />
               Status Keanggotaan
+              {/* Filter berdasarkan status "Aktif" atau "Tidak Aktif" */}
               <label>
                 Aktif{" "}
                 <input
@@ -117,8 +123,10 @@ const Tabel = () => {
           </div>
         </div>
 
+        {/* Tombol untuk menampilkan form tambah pengguna */}
         <button onClick={toggleFormVisibility}>Add User</button>
       </div>
+
       <div className="container-table">
         <table className="userTable">
           <thead>
@@ -132,6 +140,7 @@ const Tabel = () => {
             </tr>
           </thead>
           <tbody>
+            {/* Menampilkan data pengguna yang sudah diurutkan dan difilter */}
             {sortedUsers.length < 1 ? (
               <tr>
                 <td colSpan="6" style={{ textAlign: "center" }}>
@@ -148,6 +157,7 @@ const Tabel = () => {
                   <td>{user.status}</td>
                   <td>
                     <div className="aksi">
+                      {/* Tombol untuk memperbarui dan menghapus pengguna */}
                       <button onClick={() => handleUpdateUser(user)}>
                         Update
                       </button>

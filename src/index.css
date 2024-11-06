@@ -313,6 +313,11 @@ hr {
     margin-top: 5.5rem;
   }
 
+  .box-table button {
+    padding: 5px;
+    font-size: 0.8rem;
+  }
+
   .dropdown {
     font-size: 0.8rem;
   }

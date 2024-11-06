@@ -1,21 +1,20 @@
-import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Table from "./components/Table";
 import Form from "./components/Form";
 import { useFormContext } from "./context/FormContext";
 import useFetchUsers from "./hooks/useFetchUser";
-import { useUserContext } from "./context/UserContext";
 import Loading from "./components/Loading";
 
 function App() {
-  const { isFormVisible } = useFormContext();
-  const { loading } = useFetchUsers();
+  const { isFormVisible } = useFormContext(); // Mengakses status visibilitas form
+  const { loading } = useFetchUsers(); // Mengakses status loading saat fetching data
 
   return (
     <div className="container">
-      <Header />
-      {loading ? <Loading /> : <Table />}
-      {isFormVisible && <Form />}
+      <Header /> {/* Menampilkan header */}
+      {loading ? <Loading /> : <Table />} {/* Menampilkan loading atau tabel */}
+      {isFormVisible && <Form />}{" "}
+      {/* Menampilkan form jika isFormVisible true */}
     </div>
   );
 }

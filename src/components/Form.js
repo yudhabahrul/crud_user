@@ -3,10 +3,14 @@ import { useFormContext } from "../context/FormContext";
 import { useUserContext } from "../context/UserContext";
 
 const Form = () => {
+  // Mengambil fungsi untuk toggle visibilitas form dari context FormContext
   const { toggleFormVisibility } = useFormContext();
+
+  // Mengambil data pengguna yang dipilih dan fungsi untuk update dan menambahkan pengguna dari context UserContext
   const { selectedUser, selectUserForUpdate, setUsers, addUser } =
     useUserContext();
 
+  // Menyimpan data form di state local
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
@@ -14,6 +18,7 @@ const Form = () => {
     status: "",
   });
 
+  // Menggunakan useEffect untuk mengisi form dengan data pengguna yang dipilih untuk update
   useEffect(() => {
     if (selectedUser) {
       setFormData({
@@ -23,8 +28,9 @@ const Form = () => {
         status: selectedUser.status,
       });
     }
-  }, [selectedUser]);
+  }, [selectedUser]); // Meng-update formData ketika selectedUser berubah
 
+  // Fungsi untuk menangani perubahan input form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -33,6 +39,7 @@ const Form = () => {
     }));
   };
 
+  // Fungsi untuk validasi form sebelum submit
   const validate = () => {
     // Validasi nama tidak boleh kosong
     if (!formData.nama.trim()) {
@@ -68,19 +75,21 @@ const Form = () => {
     return true;
   };
 
+  // Fungsi untuk menutup form dan mereset data jika ada user yang dipilih
   const handleCloseForm = () => {
     toggleFormVisibility();
     if (selectedUser) {
-      selectUserForUpdate(null);
+      selectUserForUpdate(null); // Mengatur selectedUser menjadi null setelah form ditutup
     }
   };
 
+  // Fungsi untuk menangani pengiriman form
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validate()) {
       if (selectedUser) {
-        // Update user yang sudah ada
+        // Jika ada selectedUser, lakukan update
         const updatedUser = {
           ...selectedUser,
           nama: formData.nama,
@@ -89,7 +98,7 @@ const Form = () => {
           status: formData.status,
         };
 
-        // Memperbarui user dan menyimpan ke localStorage
+        // Memperbarui daftar pengguna dan menyimpan perubahan di localStorage
         setUsers((prevUsers) => {
           const updatedUsers = prevUsers.map((user) =>
             user.id === selectedUser.id ? updatedUser : user
@@ -98,22 +107,29 @@ const Form = () => {
           return updatedUsers;
         });
 
-        selectUserForUpdate(null); // Reset selectedUser
+        selectUserForUpdate(null); // Reset selectedUser setelah update
       } else {
-        addUser(formData); // Menambahkan pengguna baru
+        // Jika tidak ada selectedUser, tambahkan pengguna baru
+        const newUser = {
+          ...formData,
+          id: Date.now(), // Menambahkan ID unik berdasarkan timestamp
+        };
+        addUser(newUser);
       }
-      toggleFormVisibility();
+      toggleFormVisibility(); // Menutup form setelah submit
     }
   };
 
   return (
     <div className="box-form">
       <div className="form-container">
+        {/* Tombol untuk menutup form */}
         <button onClick={handleCloseForm} className="close">
           X
         </button>
         <h2>{selectedUser ? "Update User" : "Add User"}</h2>
         <form onSubmit={handleSubmit}>
+          {/* Input untuk Nama */}
           <div className="form-group">
             <label htmlFor="nama">Nama</label>
             <input
@@ -126,6 +142,7 @@ const Form = () => {
             />
           </div>
 
+          {/* Input untuk Email */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -138,6 +155,7 @@ const Form = () => {
             />
           </div>
 
+          {/* Input untuk Umur */}
           <div className="form-group">
             <label htmlFor="umur">Umur</label>
             <input
@@ -150,6 +168,7 @@ const Form = () => {
             />
           </div>
 
+          {/* Dropdown untuk Status Keanggotaan */}
           <div className="form-group">
             <label htmlFor="status">Status Keanggotaan</label>
             <select
@@ -164,6 +183,7 @@ const Form = () => {
             </select>
           </div>
 
+          {/* Tombol submit */}
           <button className="submit" type="submit">
             {selectedUser ? "Update" : "Add"}
           </button>
